@@ -1,0 +1,27 @@
+{
+  "models": [
+    {
+      "id": "my-service",
+      "label": "My local scoring service",
+      "role": "shield+spear",
+      "adapter": "http",
+      "url": "http://127.0.0.1:9000/score",
+      "field": "score",
+      "timeout": 120,
+      "headers": {}
+    }
+  ],
+  "judges": [
+    {
+      "id": "service-0.5",
+      "label": "Service judge: score >= 0.50",
+      "shield": "my-service",
+      "spear": "my-service",
+      "mode": "or",
+      "stat": "mean",
+      "g0": 0.5,
+      "r0": 0.5
+    }
+  ],
+  "default_judge": "service-0.5"
+}

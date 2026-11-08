@@ -1,0 +1,29 @@
+{
+  "models": [
+    {
+      "id": "local-llm",
+      "label": "Local LLM (OpenAI-compatible endpoint)",
+      "role": "shield+spear",
+      "adapter": "openai",
+      "base_url": "http://127.0.0.1:11434/v1",
+      "model": "qwen2.5:7b",
+      "api_key_env": "LOCAL_LLM_API_KEY",
+      "timeout": 180,
+      "max_tokens": 64,
+      "temperature": 0
+    }
+  ],
+  "judges": [
+    {
+      "id": "llm-0.5",
+      "label": "Local LLM judge: ai_probability >= 0.50",
+      "shield": "local-llm",
+      "spear": "local-llm",
+      "mode": "or",
+      "stat": "mean",
+      "g0": 0.5,
+      "r0": 0.5
+    }
+  ],
+  "default_judge": "llm-0.5"
+}

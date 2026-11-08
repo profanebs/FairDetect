@@ -1,0 +1,22 @@
+# Build outputs and local data
+app/node_modules/
+app/.vite/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Model weights: keep the directory, ignore the checkpoints
+models/*
+!models/README.md
+
+# Local secrets and reports
+server/service-token.txt
+config/models.local.json
+ops-reports/
+*.log
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini

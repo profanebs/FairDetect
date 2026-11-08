@@ -1,0 +1,28 @@
+{
+  "models": [
+    {
+      "id": "local-model",
+      "label": "My local classifier",
+      "role": "shield+spear",
+      "adapter": "hf",
+      "path": "models/local-model",
+      "ai_label_index": "auto",
+      "max_length": 256,
+      "device": "auto",
+      "batch_size": 32
+    }
+  ],
+  "judges": [
+    {
+      "id": "single-0.5",
+      "label": "Single-model judge: score >= 0.50",
+      "shield": "local-model",
+      "spear": "local-model",
+      "mode": "or",
+      "stat": "mean",
+      "g0": 0.5,
+      "r0": 0.5
+    }
+  ],
+  "default_judge": "single-0.5"
+}

@@ -1,0 +1,39 @@
+{
+  "models": [
+    {
+      "id": "shield",
+      "label": "Shield (bring your own checkpoint)",
+      "role": "shield",
+      "adapter": "hf",
+      "path": "models/shield",
+      "ai_label_index": "auto",
+      "max_length": 256,
+      "device": "auto",
+      "batch_size": 32
+    },
+    {
+      "id": "spear",
+      "label": "Spear (bring your own checkpoint)",
+      "role": "spear",
+      "adapter": "hf",
+      "path": "models/spear",
+      "ai_label_index": "auto",
+      "max_length": 256,
+      "device": "auto",
+      "batch_size": 32
+    }
+  ],
+  "judges": [
+    {
+      "id": "mean-bar",
+      "label": "Mean-bar judge: shield >= 0.32 OR spear >= 0.80",
+      "shield": "shield",
+      "spear": "spear",
+      "mode": "or",
+      "stat": "mean",
+      "g0": 0.32,
+      "r0": 0.8
+    }
+  ],
+  "default_judge": "mean-bar"
+}
