@@ -39,9 +39,9 @@ except Exception:
     pass
 
 try:
-    from .adapters import build_adapter, AdapterError
+    from .adapters import build_adapter
 except ImportError:  # running as a script: python server/fairdetect_api.py
-    from adapters import build_adapter, AdapterError
+    from adapters import build_adapter
 
 ROOT = Path(__file__).resolve().parent.parent          # repo root
 APP_DIST = ROOT / "app" / "dist"
@@ -49,7 +49,7 @@ STRINGS_FILE = Path(__file__).resolve().parent / "report_zh.json"
 CONFIG_FILE = Path(os.environ.get("FAIRDETECT_CONFIG", str(ROOT / "config" / "models.json"))).resolve()
 PORT = int(os.environ.get("FAIRDETECT_PORT", "8790"))
 HOST = os.environ.get("FAIRDETECT_HOST", "127.0.0.1").strip() or "127.0.0.1"
-MAXLEN, WIN, STRIDE, CAP = 256, 8, 2, 30   # defaults; per-model values come from config
+WIN, STRIDE, CAP = 8, 2, 30   # defaults; per-model values come from config
 
 ALIASES = {}
 
