@@ -10,6 +10,11 @@ should usually score `ai_style.txt` higher than `human_style.txt`, but nothing
 in this repository guarantees that: the scores depend entirely on the model you
 attach.
 
+On the original FairDetect pair, `human_style.txt` is itself flagged (the spear
+model gives it a high score). That is the known false-positive problem, not a
+bug in the example. It is included on purpose: a demo that only shows clean
+passes would hide the main limitation.
+
 Use them with:
 
 ```powershell

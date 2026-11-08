@@ -135,8 +135,8 @@ class HFClassifierAdapter:
         try:
             tok = AutoTokenizer.from_pretrained(str(self.path), local_files_only=True)
             model = AutoModelForSequenceClassification.from_pretrained(
-                str(self.path), local_files_only=True, torch_dtype=torch.float32)
-            model.to(device).eval()
+                str(self.path), local_files_only=True)
+            model = model.float().to(device).eval()
         except Exception as e:
             raise AdapterError("cannot load %s: %s" % (self.path, e))
         if self.ai_label_index == "auto" or self.ai_label_index is None:

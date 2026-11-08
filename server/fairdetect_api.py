@@ -22,12 +22,21 @@ import html as html_mod
 import json
 import os
 import re
+import shutil
 import subprocess
+import sys
+import tempfile
 import threading
 import time
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 try:
     from .adapters import build_adapter, AdapterError
@@ -403,6 +412,8 @@ def report_pdf(job_id):
     """Render the standalone report page to a real PDF via headless Edge/Chrome.
 
     Returns the PDF path, or None when no browser is installed / printing failed.
+    Each call uses a throwaway profile directory: reusing one profile makes a
+    second headless run attach to the first and exit without writing a file.
     """
     exe = next((p for p in BROWSERS if Path(p).exists()), None)
     if not exe:
@@ -414,16 +425,32 @@ def report_pdf(job_id):
             out.unlink()
         except OSError:
             pass
+    profile = Path(tempfile.mkdtemp(prefix="fairdetect-pdf-"))
     cmd = [exe, "--headless=new", "--disable-gpu", "--no-first-run",
            "--no-pdf-header-footer", "--print-to-pdf-no-header",
-           "--user-data-dir=%s" % (PDF_DIR / "_profile"),
+           "--user-data-dir=%s" % profile,
            "--print-to-pdf=%s" % out,
            "http://127.0.0.1:%d/api/jobs/%s/report" % (PORT, job_id)]
     try:
-        subprocess.run(cmd, timeout=180, capture_output=True)
+        subprocess.run(cmd, timeout=180, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         return None
-    return out if out.exists() and out.stat().st_size > 1000 else None
+    finally:
+        shutil.rmtree(profile, ignore_errors=True)
+    # Edge can exit before the PDF is fully flushed. Wait for a stable file.
+    last, stable = -1, 0
+    for _ in range(80):
+        if out.exists():
+            size = out.stat().st_size
+            if size > 1000 and size == last:
+                stable += 1
+                if stable >= 2:
+                    return out
+            else:
+                stable = 0
+            last = size
+        time.sleep(0.25)
+    return None
 
 
 def report_html(job):
