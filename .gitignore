@@ -16,6 +16,9 @@ config/models.local.json
 ops-reports/
 *.log
 
+# Release archives (uploaded as GitHub release assets, never committed)
+fairdetect-models-*.zip
+
 # OS noise
 .DS_Store
 Thumbs.db

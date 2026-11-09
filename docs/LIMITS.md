@@ -65,7 +65,7 @@ The published thresholds belong to one model pair. A different checkpoint, a dif
 
 ## 13. Data provenance
 
-The original checkpoints were trained on a mixture of public and restricted corpora (learner corpora with registration requirements, academic corpora with licenses, generated humanizer outputs). They are not redistributed. If you train your own model, you are responsible for the licenses of your training data.
+The original checkpoints were trained on a mixture of public and restricted corpora (learner corpora with registration requirements, academic corpora with licenses, generated humanizer outputs). The **model weights are released** in the `models-v4` release attached to this repository, under research and evaluation use only, non-commercial terms. The **corpora themselves are not redistributed**. If you train your own model, you are responsible for the licenses of your training data.
 
 ## 14. Not a disciplinary tool
 

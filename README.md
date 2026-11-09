@@ -2,9 +2,8 @@
 
 **A local-first AI-text detection research prototype.** Two window classifiers, a transparent judge layer, a Turnitin-style review report, and a model adapter layer that lets you attach your own local model.
 
-> [!WARNING]
-> **This repository does not detect AI text out of the box.**
-> The fine-tuned DeBERTa checkpoints that produced the numbers below are **not included**. They were trained on corpora that cannot be redistributed. You must attach your own local model: a Hugging Face classifier, a local OpenAI-compatible LLM, or a small HTTP scorer.
+> [!NOTE]
+> **The Judge 4.0 model weights are published** as the [`models-v4` release](../../releases/tag/models-v4). Download the archive, extract it into `models/`, and the console works out of the box — see [`models/README.md`](models/README.md). If you prefer, you can still attach your own Hugging Face classifier, a local OpenAI-compatible LLM, or a small HTTP scorer.
 >
 > Even with the original weights, the system has a **measured 26.7% false-positive rate on high-ability human academic writing** (MICUSP) and an **8.22% false-positive rate on a 3,478-document human holdout set**. It is not calibrated to Turnitin. It must never be used as the sole basis for an accusation.
 
@@ -36,7 +35,42 @@ This repository is the **best version we can publish**: the full inference pipel
 | `docs/` | Evaluation, limitations, model contract, architecture, ethics. |
 | `examples/` | Two synthetic smoke-test texts. Not real submissions. |
 
-No model weights, no training data, no student texts. The repository is intentionally data-free.
+Model weights are published in the release, not in this repository. No training data and no student texts are published. The repository itself is intentionally data-free.
+
+---
+
+## Measured results (Judge 4.0)
+
+The numbers below belong to the published checkpoint pair (`r11-shield:ep1` × `r10-spear:ep0`) and the Judge 4.0 rule. They are not results of any model you attach yourself. Pools marked *holdout* were never used for training or threshold selection.
+
+| Pool | n | Result |
+| --- | --- | --- |
+| AHBench-10 humanized AI (*holdout*) | 363 | **0.83% missed** (3/363) |
+| Strongly humanized set | 23 | 8.7% missed (2/23) |
+| ESL learner essays, NUCLE + PELIC (*holdout*) | 2,649 | **97.55% pass** |
+| High-ability academic writing, MICUSP (*holdout*) | 829 | **73.34% pass** (26.66% false positives) |
+| Human frozen pool (tuned-on, optimistic) | 1,595 | 99.42% pass |
+
+### Same benchmark, commercial detectors
+
+On the same AHBench 2026-10 release of humanized AI (363 documents), miss rate:
+
+| Detector | Miss rate |
+| --- | --- |
+| **FairDetect Judge 4.0** | **0.83%** |
+| GPTZero | 48.7% |
+| Copyleaks | 50.1% |
+| Originality.ai | 57.2% |
+| Winston AI | 59.1% |
+| QuillBot | 72.8% |
+| ZeroGPT | 74.5% |
+| Grammarly | 78.3% |
+
+The commercial figures are published by the benchmark and average two releases; ours are from one release and were produced by our own scoring run. Treat this as an order-of-magnitude comparison on humanized AI, not a controlled head-to-head. Full caveats: [`docs/COMPARISON.md`](docs/COMPARISON.md).
+
+The 26.66% false-positive rate on polished human academic writing is the system's largest defect. It is reported here, next to the good numbers, on purpose.
+
+---
 
 ---
 
@@ -81,7 +115,7 @@ These thresholds are **specific to the original FairDetect pair**. If you attach
 
 ---
 
-## Quick start (bring your own model)
+## Quick start
 
 ### 1. Install
 
@@ -95,21 +129,25 @@ pip install -r requirements.txt
 
 Linux / macOS: `python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt`.
 
-### 2. Put a checkpoint under `models/`
+### 2. Get the models
+
+**Use the released pair (recommended).** Download `fairdetect-models-v4.zip` from the [`models-v4` release](../../releases/tag/models-v4) and extract it into `models/`. The result should be:
 
 ```
 models/
-  shield/
+  shield/          <- r11-shield ep1
     config.json
+    model.safetensors
     tokenizer.json
     tokenizer_config.json
-    special_tokens_map.json
+  spear/           <- r10-spear ep0
+    config.json
     model.safetensors
-  spear/
-    ...
+    tokenizer.json
+    tokenizer_config.json
 ```
 
-Any Hugging Face `AutoModelForSequenceClassification` checkpoint works. Binary classifiers use softmax; single-logit models use sigmoid. The AI label is read from `id2label` when `ai_label_index` is `"auto"`; set it to `0` or `1` if your labels are ambiguous.
+**Or bring your own.** Any Hugging Face `AutoModelForSequenceClassification` checkpoint works. Binary classifiers use softmax; single-logit models use sigmoid. The AI label is read from `id2label` when `ai_label_index` is `"auto"`; set it to `0` or `1` if your labels are ambiguous.
 
 ### 3. Check the setup
 
@@ -269,22 +307,7 @@ The browser UI uses `/api/jobs`. The `score` and `batch` endpoints are for other
 
 ---
 
-## Measured results (original models, frozen pools)
-
-These numbers come from the original `r11-shield:ep1` × `r10-spear:ep0` pair at the Judge 4.0 operating point. They are **not** the results of whatever model you attach.
-
-| Metric | Result |
-| --- | --- |
-| AHBench-10 AI detection | **3 / 363 missed** (0.83%) |
-| Strongly humanized AI | **2 / 23 missed** (8.7%) |
-| Human frozen pool (1,595 docs) | **99.418% pass** (10 false positives) |
-| Human holdout, ESL learners (2,649 docs) | **97.55% pass** (2.45% false positives) |
-| Human holdout, MICUSP academic writing (829 docs) | **73.34% pass** (26.66% false positives) |
-| MICUSP native speakers (681 docs) | **71.07% pass** (28.93% false positives) |
-| MICUSP non-native speakers (148 docs) | **83.78% pass** (16.22% false positives) |
-| All human holdout (3,478 docs) | **91.78% pass** (8.22% false positives) |
-
-### How to read this
+## How to read the results
 
 - **The 99.4% frozen-pool number is optimistic.** The operating point was tuned on pools that include the evaluation material. The honest number is the 3,478-document holdout: **8.22% of human documents were flagged**.
 - **Writing ability correlates with false positives.** The better the human academic prose, the more likely it is to be flagged. This is the largest known defect.
@@ -292,7 +315,7 @@ These numbers come from the original `r11-shield:ep1` × `r10-spear:ep0` pair at
 - **The AI-side threshold was selected on the evaluation pool.** "3/363" carries selection bias; an independent threshold set was never completed.
 - **These are not probabilities that an author used AI.** They are shares of text/windows that cross a model-specific bar.
 
-Full detail: [docs/EVALUATION.md](docs/EVALUATION.md).
+Full detail: [docs/EVALUATION.md](docs/EVALUATION.md) and [docs/RESULTS.md](docs/RESULTS.md).
 
 ---
 
@@ -318,7 +341,7 @@ More: [docs/LIMITS.md](docs/LIMITS.md).
 - **Do not use this to accuse, punish, or surveil anyone.** A flag is a reason to look at the text, not a conclusion about the author.
 - **Keep student texts local.** The server stores uploaded text in memory for the life of the process and writes reports/PDFs under `ops-reports/`. It does not call external services unless you configure an adapter that does.
 - **Do not send FERPA / GDPR / institutional data to a third-party API** through this tool.
-- **The original weights are not distributed** because their training corpora include resources with registration or license restrictions.
+- **Model weights are research-use only, non-commercial.** The checkpoints were fine-tuned on corpora with non-commercial or no-redistribution terms; those terms pass through to the released weights. See `docs/LIMITS.md` §13.
 - **Turnitin is a trademark of Turnitin, LLC.** This project is not affiliated with or endorsed by Turnitin.
 
 ---
@@ -335,7 +358,8 @@ FairDetect/
   judge/judge.py       portable CLI
   config/              model and judge definitions
   models/              your checkpoints (git-ignored)
-  docs/                evaluation, limits, contract, architecture, ethics
+  docs/                evaluation, training, results, comparison, limits,
+                       model contract, architecture, ethics, technical report
   examples/            synthetic smoke-test texts
   scripts/             setup check and launchers
   requirements.txt

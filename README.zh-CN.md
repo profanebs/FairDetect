@@ -2,11 +2,10 @@
 
 **本地优先的 AI 文本检测研究原型。** 双窗口分类器、可解释的判决层、Turnitin 风格报告，以及一个可以接上你自己本地模型的适配层。
 
-> [!WARNING]
-> **这个仓库开箱不能检测 AI 文本。**
-> 产出下方数字的 DeBERTa 微调权重**没有随仓库发布**——它们训练所用的语料不允许再分发。你必须自己接一个本地模型：Hugging Face 分类器、本地 OpenAI 兼容大模型，或一个小的 HTTP 打分服务。
+> [!NOTE]
+> **Judge 4.0 的模型权重已发布**为 [`models-v4` release](../../releases/tag/models-v4)。下载压缩包、解压到 `models/`，控制台就能开箱使用——见 [`models/README.md`](models/README.md)。你也可以继续自带模型：Hugging Face 分类器、本地 OpenAI 兼容大模型，或一个小的 HTTP 打分服务。
 >
-> 就算拿回原始权重，这套系统在**高能力人类学术写作**（MICUSP）上的实测误报率是 **26.7%**，在 3,478 篇人类留出集上是 **8.22%**。它没有和 Turnitin 校准，**绝不能拿它当处分或指控的唯一依据**。
+> 就算用原始权重，这套系统在**高能力人类学术写作**（MICUSP）上的实测误报率是 **26.7%**，在 3,478 篇人类留出集上是 **8.22%**。它没有和 Turnitin 校准，**绝不能拿它当处分或指控的唯一依据**。
 
 ---
 
@@ -20,7 +19,7 @@ FairDetect 只问一个更窄的问题：
 
 答案是**部分可以**。失败的地方写在 [docs/LIMITS.md](docs/LIMITS.md) 和 [docs/EVALUATION.md](docs/EVALUATION.md)。
 
-这个仓库是**能公开的最好版本**：完整推理管道、判决层、审阅界面、模型适配契约——除了权重，全都在。
+这个仓库是**能公开的最好版本**：完整推理管道、判决层、审阅界面、模型适配契约，以及训练好的 Judge 4.0 权重（在 release 里）。
 
 ---
 
@@ -36,7 +35,40 @@ FairDetect 只问一个更窄的问题：
 | `docs/` | 评测、局限、模型契约、架构、伦理。 |
 | `examples/` | 两段合成的冒烟测试文本，不是真实稿件。 |
 
-没有权重、没有训练数据、没有学生文本。这个仓库刻意保持数据为零。
+权重在 release 里发布，不在仓库内。没有训练数据、没有学生文本。仓库本身刻意保持数据为零。
+
+---
+
+## 实测结果（Judge 4.0）
+
+以下数字属于已发布的权重对（`r11-shield:ep1` × `r10-spear:ep0`）和 Judge 4.0 规则，不是你自带模型的结果。标 *holdout* 的池子从未参与训练或定阈。
+
+| 池 | n | 结果 |
+| --- | --- | --- |
+| AHBench-10 人化 AI（*holdout*） | 363 | **漏检 0.83%**（3/363） |
+| 强人化集 | 23 | 漏检 8.7%（2/23） |
+| ESL 学习者作文 NUCLE + PELIC（*holdout*） | 2,649 | **通过 97.55%** |
+| 高能力学术写作 MICUSP（*holdout*） | 829 | **通过 73.34%**（误报 26.66%） |
+| 人类冻结池（参与过调参，偏乐观） | 1,595 | 通过 99.42% |
+
+### 同一基准上的商业检测器
+
+AHBench 2026-10 人化 AI 发布集（363 篇），漏检率：
+
+| 检测器 | 漏检率 |
+| --- | --- |
+| **FairDetect Judge 4.0** | **0.83%** |
+| GPTZero | 48.7% |
+| Copyleaks | 50.1% |
+| Originality.ai | 57.2% |
+| Winston AI | 59.1% |
+| QuillBot | 72.8% |
+| ZeroGPT | 74.5% |
+| Grammarly | 78.3% |
+
+商业数字由基准方发布、跨两期平均；我们的是单期、自己跑的分。把它当"同基准上的数量级对比"，不是受控的头对头实验。完整口径警告见 [`docs/COMPARISON.md`](docs/COMPARISON.md)。
+
+高能力人类学术写作 26.66% 的误报是这套系统最大的缺陷，放在好数字旁边是有意为之。
 
 ---
 
@@ -78,7 +110,7 @@ flag  未命中但 r >= 0.90     （建议人工看一眼）
 
 ---
 
-## 快速开始（自带模型）
+## 快速开始
 
 ### 1. 安装
 
@@ -92,21 +124,25 @@ pip install -r requirements.txt
 
 Linux / macOS：`python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt`。
 
-### 2. 把检查点放进 `models/`
+### 2. 获取模型
+
+**用发布好的权重（推荐）。** 从 [`models-v4` release](../../releases/tag/models-v4) 下载 `fairdetect-models-v4.zip`，解压到 `models/`。结果应是：
 
 ```
 models/
-  shield/
+  shield/          <- r11-shield ep1
     config.json
+    model.safetensors
     tokenizer.json
     tokenizer_config.json
-    special_tokens_map.json
+  spear/           <- r10-spear ep0
+    config.json
     model.safetensors
-  spear/
-    ...
+    tokenizer.json
+    tokenizer_config.json
 ```
 
-任何 Hugging Face `AutoModelForSequenceClassification` 检查点都行。二分类用 softmax，单 logit 用 sigmoid。`ai_label_index` 设为 `"auto"` 时会读 `id2label`；标签含糊就手动填 `0` 或 `1`。
+**或者自带模型。** 任何 Hugging Face `AutoModelForSequenceClassification` 检查点都行。二分类用 softmax，单 logit 用 sigmoid。`ai_label_index` 设为 `"auto"` 时会读 `id2label`；标签含糊就手动填 `0` 或 `1`。
 
 ### 3. 自检
 
@@ -266,7 +302,7 @@ Content-Type: application/json
 
 ---
 
-## 实测结果（原始模型，冻结池）
+## 结果明细（原始模型）
 
 这些数字来自原始 `r11-shield:ep1` × `r10-spear:ep0` 模型对、Judge 4.0 判决档。它们**不是**你接上的模型的结果。
 
@@ -315,7 +351,7 @@ Content-Type: application/json
 - **不要拿它去指控、惩罚或监视任何人。** 标记是“值得看一眼”的理由，不是对作者的结论。
 - **学生文本留在本地。** 服务把上传文本放在进程内存里，报告/PDF 写到 `ops-reports/`。除非你配置了会外联的适配器，否则不调用外部服务。
 - **不要通过这个工具把 FERPA / GDPR / 学校数据发给第三方 API。**
-- **原始权重不发布**，因为训练语料包含需要注册或许可限制的资源。
+- **模型权重仅限研究与评估使用、非商业。** 检查点训练所用语料带有非商业或禁止再分发的条款，这些条款同样适用于发布的权重。见 `docs/LIMITS.md` §13。
 - **Turnitin 是 Turnitin, LLC 的商标。** 本项目与 Turnitin 无隶属、无背书关系。
 
 ---
@@ -331,8 +367,8 @@ FairDetect/
     report_zh.json     报告文案
   judge/judge.py       便携命令行
   config/              模型与判决档定义
-  models/              你的检查点（git 忽略）
-  docs/                评测、局限、契约、架构、伦理
+  models/              你的检查点（git 忽略；发布权重在 release 里）
+  docs/                评测、训练、结果、对比、局限、契约、架构、伦理、技术报告
   examples/            合成冒烟测试文本
   scripts/             自检与启动脚本
   requirements.txt
