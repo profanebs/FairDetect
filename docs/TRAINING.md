@@ -17,7 +17,7 @@ The two models are not two sizes of the same thing. They are two **different tra
 | Shield | `r11-shield:ep1` | Avoid flagging human writing | False positives on real human text |
 | Spear | `r10-spear:ep0` | Catch AI and humanized AI | Missed AI text |
 
-A single model cannot do both. The measured evidence is in [RESULTS.md §3](RESULTS.md#3-why-two-models): the shield alone reaches 0/363 missed on AHBench but flags 23% of a human academic pool; the spear alone passes 99.6% of human documents but misses 10/363 AI documents.
+A single model cannot do both. The measured evidence is in [RESULTS.md §3](RESULTS.md#3-why-two-models): the aggressive shield-forward pair reaches 0/363 missed on AHBench but flags 9.8% of the frozen human pool (157/1,595); the spear alone passes 99.6% of human documents but misses 10/363 AI documents.
 
 ---
 

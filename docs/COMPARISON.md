@@ -8,34 +8,42 @@ This document collects every external comparison we have, and states what each o
 
 [AI Humanizer Benchmark](https://huggingface.co/datasets/AIHumanizerBenchmark/ai-humanizer-benchmark) publishes humanized AI outputs plus the verdicts of seven commercial detectors. The 2026-10 release contains 363 documents across 11 humanizer tools. Our models were scored on that release.
 
-Miss rate (lower is better):
+Two different statistics are involved, and they cannot be compared directly:
 
-| Detector | Miss rate |
-| --- | --- |
-| **FairDetect Judge 4.0** (r11-shield ep1 × r10-spear ep0) | **0.83%** (3/363) |
-| **FairDetect Spear 3.0** (r9 ep0, earlier) | **3.0%** |
-| GPTZero | 48.7% |
-| Copyleaks | 50.1% |
-| Originality.ai | 57.2% |
-| Winston AI | 59.1% |
-| QuillBot | 72.8% |
-| ZeroGPT | 74.5% |
-| Grammarly | 78.3% |
+| Detector | Statistic | Value |
+| --- | --- | --- |
+| **FairDetect Judge 4.0** (r11-shield ep1 × r10-spear ep0) | document-level miss rate | **0.83%** (3/363) |
+| **FairDetect Spear 3.0** (r9 ep0, earlier) | document-level miss rate | **3.0%** |
+| GPTZero | mean human-probability | 0.487 |
+| Copyleaks | mean human-probability | 0.501 |
+| Originality.ai | mean human-probability | 0.572 |
+| Winston AI | mean human-probability | 0.591 |
+| QuillBot | mean human-probability | 0.728 |
+| ZeroGPT | mean human-probability | 0.745 |
+| Grammarly | mean human-probability | 0.783 |
+
+The commercial figures are each detector's **mean human-probability** over the benchmark's humanized outputs, averaged across two cycles. This was verified by recomputing both statistics from the benchmark's per-output scores: the seven published figures match the mean `human_prob` exactly.
+
+If the commercial verdicts are converted to a binary "judged human" rate, the same order gives 14.2%, 49.7%, 19.6%, 37.7%, 46.4%, 28.4%, 49.4%. That column is not published as the main comparison because the benchmark's binary verdicts are internally inconsistent across cycles (one detector records zero human verdicts in one cycle while its mean human-probability for that cycle is 0.42) and is not fit to publish.
+
+**Do not read 0.83% against 48.7–78.3% as the same quantity.** One is a decision rate; the other is a mean score. The honest statement is: on the same humanized-AI benchmark, FairDetect's document-level miss rate is under 1%, while the published commercial mean human-probabilities are 0.49–0.78 — different statistics, same direction.
 
 ### What this comparison is
 
 - Same benchmark, same document set for the AI side.
 - Our numbers come from our own scoring run on the 363-document release.
-- The commercial numbers come from the benchmark's published verdicts, which average **two releases** (2026-09 and 2026-10) across 11 humanizer tools.
+- The commercial numbers are **mean human-probabilities**, not verdict rates, averaged over **two releases** (2026-09 and 2026-10) across 11 humanizer tools.
+- The binary commercial verdict column exists in the benchmark but is internally inconsistent across cycles, so it is not used as the headline comparison.
 
 ### What it is not
 
+- **Not a like-for-like statistic.** Our number is a document-level decision rate; theirs is a mean score. A detector that averages a 0.49 human-probability can still catch most documents at its own threshold.
 - **Not a clean head-to-head.** The commercial figures average two releases; ours are from one. The benchmark's own methodology notes that humanizer tools change monthly.
 - **Not a claim about general AI detection.** This benchmark measures detection of **humanized** output from 11 specific tools. A detector can be excellent here and ordinary on raw model output.
 - **Not a claim about all seven vendors' current versions.** The published verdicts are a snapshot. Vendors retrain every 3–6 months.
 - **Not an independent audit.** We did not run the commercial APIs ourselves.
 
-The direction is large enough to survive those caveats — a 0.8% miss rate against a 49–78% range is not a rounding difference — but the exact gap should be read as "order of magnitude on this benchmark", not as a measured ratio.
+The direction survives those caveats: a sub-1% document-level miss rate against commercial mean human-probabilities of 0.49–0.78 is a large gap on any reading. The exact multiplier is not defensible because the statistics differ.
 
 ---
 

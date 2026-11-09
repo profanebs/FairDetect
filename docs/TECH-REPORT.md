@@ -92,7 +92,7 @@ The gap between the frozen pool and the holdout is the honest measure of selecti
 
 ### 4.2 Commercial comparison
 
-On the same AHBench 2026-10 release, the seven commercial detectors published by the benchmark miss 48.7%–78.3% of humanized documents; Judge 4.0 misses 0.83%. The commercial figures average two benchmark releases, so this is an order-of-magnitude comparison rather than a controlled head-to-head. Details and caveats: [COMPARISON.md](COMPARISON.md).
+On the same AHBench humanized-AI benchmark, Judge 4.0 misses 0.83% of documents at the document level. The benchmark publishes each commercial detector's **mean human-probability** — 0.487 (GPTZero), 0.501 (Copyleaks), 0.572 (Originality.ai), 0.591 (Winston), 0.728 (QuillBot), 0.745 (ZeroGPT), 0.783 (Grammarly), averaged over two cycles. These are mean scores, not decision rates; they cannot be divided by our miss rate. Converted to a binary "judged human" rate the same detectors range 14.2%–49.7%, but that column is internally inconsistent across cycles and is not used as the headline. Details and caveats: [COMPARISON.md](COMPARISON.md).
 
 ### 4.3 Decision statistic
 

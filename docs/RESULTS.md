@@ -42,22 +42,23 @@ Miss rate, lower is better. Numbers from frozen external pools that never entere
 Two things to notice:
 
 - **The second epoch is worse.** `r9 final` misses 9.9% where `r9 ep0` misses 3.0%. Checkpoints are selected per epoch on frozen pools.
-- **The strongest AI-side combination is not the published one.** `r11-shield:ep0 × r10-spear:ep0` reaches 0/363 and 0/23, but it flags 23% of a human academic pool (see §3). It was rejected for that reason.
+- **The strongest AI-side combination is not the published one.** `r11-shield:ep0 × r10-spear:ep0` reaches 0/363 and 0/23, but it flags 9.8% of the human frozen pool (157/1,595; see §3). It was rejected for that reason.
 
 ---
 
 ## 3. Why two models
 
-The single-model attempts, same pools:
+Configurations measured under the **same** Judge-4.0-style mean rule (shorter bars for single models):
 
-| Configuration | AHBench missed | Strongly humanized missed | Human five-pool macro | False positives |
-| --- | --- | --- | --- | --- |
-| Shield alone (`r11-shield:ep0`) | **0/363** | **0/23** | 76.69% | 157 / 1,595 |
-| Shield alone (`r11-shield:ep1`) | 3/363 | 2/23 | 97.24% | 26 / 1,595 |
-| Spear alone (`r10-spear:ep0`, mean >= 0.70) | 10/363 | 3/23 | **99.64%** | **9 / 1,595** |
-| Pair + Judge 4.0 | 3/363 | 2/23 | 99.42% | 10 / 1,595 |
+| Configuration | Rule | AHBench missed | Strongly humanized missed | Human five-pool macro | False positives |
+| --- | --- | --- | --- | --- | --- |
+| Shield-forward pair (`r11-shield:ep0` × `r10-spear:ep0`) | mean bars, aggressive shield | **0/363** | **0/23** | 76.69% | 157 / 1,595 |
+| Spear alone (`r10-spear:ep0`) | mean >= 0.70 | 10/363 | 3/23 | **99.64%** | **9 / 1,595** |
+| Pair + Judge 4.0 (`r11-shield:ep1` × `r10-spear:ep0`) | mean 0.32 / 0.80 | 3/363 | 2/23 | 99.42% | 10 / 1,595 |
 
 The two objectives genuinely conflict. The shield can achieve perfect AI-side numbers only by becoming aggressive enough to flag a quarter of real academic writing. The spear is the opposite: excellent on humans, blind to a subset of AI. The judge layer combines them at a chosen operating point.
+
+Note on comparability: an earlier table also listed `r11-shield:ep1` scored under the `pct50` rule (3/363 missed, 97.24% human macro, 26 false positives). Those numbers come from a different decision statistic than the mean-bar rows above and are **not** directly comparable — a disjunction cannot have a lower false-positive count than its own terms, so mixing the two columns would be misleading. Only same-rule configurations are shown in this table.
 
 ---
 

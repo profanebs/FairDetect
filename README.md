@@ -53,20 +53,20 @@ The numbers below belong to the published checkpoint pair (`r11-shield:ep1` × `
 
 ### Same benchmark, commercial detectors
 
-On the same AHBench 2026-10 release of humanized AI (363 documents), miss rate:
+On the same AHBench humanized-AI benchmark, two **different** statistics:
 
-| Detector | Miss rate |
-| --- | --- |
-| **FairDetect Judge 4.0** | **0.83%** |
-| GPTZero | 48.7% |
-| Copyleaks | 50.1% |
-| Originality.ai | 57.2% |
-| Winston AI | 59.1% |
-| QuillBot | 72.8% |
-| ZeroGPT | 74.5% |
-| Grammarly | 78.3% |
+| Detector | Statistic | Value |
+| --- | --- | --- |
+| **FairDetect Judge 4.0** | document-level miss rate | **0.83%** (3/363) |
+| GPTZero | mean human-probability | 0.487 |
+| Copyleaks | mean human-probability | 0.501 |
+| Originality.ai | mean human-probability | 0.572 |
+| Winston AI | mean human-probability | 0.591 |
+| QuillBot | mean human-probability | 0.728 |
+| ZeroGPT | mean human-probability | 0.745 |
+| Grammarly | mean human-probability | 0.783 |
 
-The commercial figures are published by the benchmark and average two releases; ours are from one release and were produced by our own scoring run. Treat this as an order-of-magnitude comparison on humanized AI, not a controlled head-to-head. Full caveats: [`docs/COMPARISON.md`](docs/COMPARISON.md).
+The commercial numbers are mean scores, not verdict rates; our number is a decision rate. They are not the same quantity and must not be divided by each other. Full caveats and the binary-verdict alternative: [`docs/COMPARISON.md`](docs/COMPARISON.md).
 
 The 26.66% false-positive rate on polished human academic writing is the system's largest defect. It is reported here, next to the good numbers, on purpose.
 

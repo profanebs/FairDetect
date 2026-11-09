@@ -53,20 +53,20 @@ FairDetect 只问一个更窄的问题：
 
 ### 同一基准上的商业检测器
 
-AHBench 2026-10 人化 AI 发布集（363 篇），漏检率：
+同一个 AHBench 人化 AI 基准上，两个**不同**的统计量：
 
-| 检测器 | 漏检率 |
-| --- | --- |
-| **FairDetect Judge 4.0** | **0.83%** |
-| GPTZero | 48.7% |
-| Copyleaks | 50.1% |
-| Originality.ai | 57.2% |
-| Winston AI | 59.1% |
-| QuillBot | 72.8% |
-| ZeroGPT | 74.5% |
-| Grammarly | 78.3% |
+| 检测器 | 统计量 | 数值 |
+| --- | --- | --- |
+| **FairDetect Judge 4.0** | 文档级漏检率 | **0.83%**（3/363） |
+| GPTZero | 平均 human-probability | 0.487 |
+| Copyleaks | 平均 human-probability | 0.501 |
+| Originality.ai | 平均 human-probability | 0.572 |
+| Winston AI | 平均 human-probability | 0.591 |
+| QuillBot | 平均 human-probability | 0.728 |
+| ZeroGPT | 平均 human-probability | 0.745 |
+| Grammarly | 平均 human-probability | 0.783 |
 
-商业数字由基准方发布、跨两期平均；我们的是单期、自己跑的分。把它当"同基准上的数量级对比"，不是受控的头对头实验。完整口径警告见 [`docs/COMPARISON.md`](docs/COMPARISON.md)。
+商业数字是平均分，不是判定率；我们的是判定率。两者不是同一个量，不能相除。完整口径与二元判定版本见 [`docs/COMPARISON.md`](docs/COMPARISON.md)。
 
 高能力人类学术写作 26.66% 的误报是这套系统最大的缺陷，放在好数字旁边是有意为之。
 
