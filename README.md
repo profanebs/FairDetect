@@ -3,7 +3,7 @@
 **A local-first AI-text detection research prototype.** Two window classifiers, a transparent judge layer, a Turnitin-style review report, and a model adapter layer that lets you attach your own local model.
 
 > [!NOTE]
-> **The Judge 4.0 model weights are published** as the [`models-v4` release](../../releases/tag/models-v4). Download the archive, extract it into `models/`, and the console works out of the box — see [`models/README.md`](models/README.md). If you prefer, you can still attach your own Hugging Face classifier, a local OpenAI-compatible LLM, or a small HTTP scorer.
+> **The Judge 4.0 model weights are published** as the [`models-v4` release](/profanebs/FairDetect/releases/tag/models-v4). Download the archive, extract it into `models/`, and the console works out of the box — see [`models/README.md`](models/README.md). If you prefer, you can still attach your own Hugging Face classifier, a local OpenAI-compatible LLM, or a small HTTP scorer.
 >
 > Even with the original weights, the system has a **measured 26.7% false-positive rate on high-ability human academic writing** (MICUSP) and an **8.22% false-positive rate on a 3,478-document human holdout set**. It is not calibrated to Turnitin. It must never be used as the sole basis for an accusation.
 
@@ -131,7 +131,7 @@ Linux / macOS: `python3 -m venv .venv && . .venv/bin/activate && pip install -r 
 
 ### 2. Get the models
 
-**Use the released pair (recommended).** Download `fairdetect-models-v4.zip` from the [`models-v4` release](../../releases/tag/models-v4) and extract it into `models/`. The result should be:
+**Use the released pair (recommended).** Download `fairdetect-models-v4.zip` from the [`models-v4` release](/profanebs/FairDetect/releases/tag/models-v4) and extract it into `models/`. The result should be:
 
 ```
 models/

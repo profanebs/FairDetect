@@ -3,7 +3,7 @@
 **本地优先的 AI 文本检测研究原型。** 双窗口分类器、可解释的判决层、Turnitin 风格报告，以及一个可以接上你自己本地模型的适配层。
 
 > [!NOTE]
-> **Judge 4.0 的模型权重已发布**为 [`models-v4` release](../../releases/tag/models-v4)。下载压缩包、解压到 `models/`，控制台就能开箱使用——见 [`models/README.md`](models/README.md)。你也可以继续自带模型：Hugging Face 分类器、本地 OpenAI 兼容大模型，或一个小的 HTTP 打分服务。
+> **Judge 4.0 的模型权重已发布**为 [`models-v4` release](/profanebs/FairDetect/releases/tag/models-v4)。下载压缩包、解压到 `models/`，控制台就能开箱使用——见 [`models/README.md`](models/README.md)。你也可以继续自带模型：Hugging Face 分类器、本地 OpenAI 兼容大模型，或一个小的 HTTP 打分服务。
 >
 > 就算用原始权重，这套系统在**高能力人类学术写作**（MICUSP）上的实测误报率是 **26.7%**，在 3,478 篇人类留出集上是 **8.22%**。它没有和 Turnitin 校准，**绝不能拿它当处分或指控的唯一依据**。
 
@@ -126,7 +126,7 @@ Linux / macOS：`python3 -m venv .venv && . .venv/bin/activate && pip install -r
 
 ### 2. 获取模型
 
-**用发布好的权重（推荐）。** 从 [`models-v4` release](../../releases/tag/models-v4) 下载 `fairdetect-models-v4.zip`，解压到 `models/`。结果应是：
+**用发布好的权重（推荐）。** 从 [`models-v4` release](/profanebs/FairDetect/releases/tag/models-v4) 下载 `fairdetect-models-v4.zip`，解压到 `models/`。结果应是：
 
 ```
 models/
