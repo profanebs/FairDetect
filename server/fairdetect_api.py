@@ -152,7 +152,8 @@ def windows_idx(n, win=WIN, stride=STRIDE, cap=CAP):
 
 
 def extract_text(name, raw):
-    if name.lower().endswith(".docx"):
+    lower = name.lower()
+    if lower.endswith(".docx"):
         import io
         import docx
         d = docx.Document(io.BytesIO(raw))
@@ -162,6 +163,16 @@ def extract_text(name, raw):
                 for c in row.cells:
                     parts.append(c.text)
         return re.sub(r"\n{3,}", "\n\n", "\n".join(x for x in parts if x and x.strip())).strip()
+    if lower.endswith(".pdf"):
+        try:
+            import pymupdf
+        except ImportError:
+            raise RuntimeError("PDF input needs pymupdf: pip install pymupdf")
+        doc = pymupdf.open(stream=raw, filetype="pdf")
+        try:
+            return "\n".join(page.get_text() for page in doc).strip()
+        finally:
+            doc.close()
     return raw.decode("utf-8", errors="replace")
 
 
