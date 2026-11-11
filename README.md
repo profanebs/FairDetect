@@ -124,6 +124,8 @@ git clone https://github.com/profanebs/FairDetect.git
 cd FairDetect
 python -m venv .venv
 .venv\Scripts\activate
+# CPU build of torch is ~130 MB; the default PyPI wheel pulls ~2.5 GB of CUDA packages.
+pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 ```
 

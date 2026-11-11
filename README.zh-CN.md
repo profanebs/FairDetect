@@ -119,6 +119,8 @@ git clone https://github.com/profanebs/FairDetect.git
 cd FairDetect
 python -m venv .venv
 .venv\Scripts\activate
+# 装 CPU 版 torch（约 130 MB）；直接 pip install torch 会拉约 2.5 GB 的 CUDA 包
+pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 ```
 
